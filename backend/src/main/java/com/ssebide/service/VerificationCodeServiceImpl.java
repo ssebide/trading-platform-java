@@ -39,14 +39,12 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
     @Override
     public VerificationCode getVerificationCodeByUser(Long userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getVerificationCodeByUser'");
+        return verificationCodeRepository.findByUserId(userId);
     }
 
     @Override
     public void deleteVerificationCodeById(VerificationCode verificationCode) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteVerificationCodeById'");
+        verificationCodeRepository.delete(verificationCode);
     }
 
     
