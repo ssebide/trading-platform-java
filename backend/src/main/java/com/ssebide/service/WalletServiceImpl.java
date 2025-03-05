@@ -72,12 +72,24 @@ public class WalletServiceImpl implements WalletService{
     }
 
     @Override
-    public Wallet payOrderPayment(Order order, User user) {
+    public Wallet payOrderPayment(Order order, User user) throws Exception {
         Wallet wallet = getUserWallet(user);
 
-        
+        if(order.getOrderType().equals(OrderType.BUY)){
+            BigDecimal newBalance = wallet.getBalance().subtract(order.getPrice());
 
-        return null;
+            if(newBalance.compareTo(order.getPrice()) < 0){
+                throw new Exception("Insufficient funds for this transaction");
+            }
+            wallet.setBalance(newBalance);
+        } else {
+            BigDecimal newBalance = wallet.getBalance().add(order.getPrice());
+
+            wallet.setBalance(newBalance);
+        }
+        walletRepository.save(wallet);
+
+        return wallet;
     }
 
 }

@@ -1,18 +1,15 @@
 package com.ssebide.modal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 
-@Data
 @Entity
-public class OrderItem {
+@Data
+public class Asset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,15 +17,11 @@ public class OrderItem {
 
     private double quantity;
 
+    private double buyPrice;
+
     @ManyToOne
     private Coin coin;
 
-    private double buyPrice;
-
-    private double sellPrice;
-
-    @JsonIgnore
-    @OneToOne
-    private Order order;
-
+    @ManyToOne
+    private User user;
 }
