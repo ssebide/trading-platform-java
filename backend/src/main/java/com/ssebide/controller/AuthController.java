@@ -22,6 +22,7 @@ import com.ssebide.response.AuthResponse;
 import com.ssebide.service.CustomUserDetailsService;
 import com.ssebide.service.EmailService;
 import com.ssebide.service.TwoFactorOtpService;
+import com.ssebide.service.WatchListService;
 import com.ssebide.utils.OtpUtils;
 
 @RestController
@@ -36,6 +37,9 @@ public class AuthController {
 
     @Autowired
     private TwoFactorOtpService twoFactorOtpService;
+
+    @Autowired
+    private WatchListService watchListService;
 
     @Autowired
     private EmailService emailService;
@@ -56,7 +60,9 @@ public class AuthController {
         newUser.setEmail(user.getEmail());
         newUser.setPassword(user.getPassword());
 
-        //User savedUser = userRepository.save(newUser);
+        User savedUser = userRepository.save(newUser);
+
+        watchListService.createWatchList(savedUser);
 
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
 
