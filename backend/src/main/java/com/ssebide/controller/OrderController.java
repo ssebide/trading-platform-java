@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssebide.domain.OrderType;
 import com.ssebide.modal.Coin;
-import com.ssebide.modal.Order;
+import com.ssebide.modal.Orders;
 import com.ssebide.modal.User;
 import com.ssebide.request.CreateOrderRequest;
 import com.ssebide.service.CoinService;
@@ -40,25 +40,25 @@ public class OrderController {
     private WalletTransactionService walletTransactionService;
 
     @PostMapping("/pay")
-    public ResponseEntity<Order> payOrderPayment(@RequestHeader("Authorization") String jwt, @RequestBody CreateOrderRequest req) throws Exception{
+    public ResponseEntity<Orders> payOrderPayment(@RequestHeader("Authorization") String jwt, @RequestBody CreateOrderRequest req) throws Exception{
 
         User user = userService.findUserProfileByJwt(jwt);
         Coin coin = coinService.findById(req.getCoinId());
 
-        Order order = orderService.processOrder(coin, req.getQuantity(), req.getOrderType(), user);
+        Orders order = orderService.processOrder(coin, req.getQuantity(), req.getOrderType(), user);
 
         return ResponseEntity.ok(order);
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<Order> getOrderById(@RequestHeader("Authorization") String jwtToken, @PathVariable Long orderId) throws Exception{
+    public ResponseEntity<Orders> getOrderById(@RequestHeader("Authorization") String jwtToken, @PathVariable Long orderId) throws Exception{
         if(jwtToken == null){
             throw new Exception("Token missing...");
         }
 
         User user = userService.findUserProfileByJwt(jwtToken);
 
-        Order order = orderService.getOrderById(orderId);
+        Orders order = orderService.getOrderById(orderId);
         if(order.getUser().getId().equals(user.getId())){
             return ResponseEntity.ok(order);
         } else {
@@ -68,10 +68,10 @@ public class OrderController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<Order>> getAllOrdersForUser(@RequestHeader("Authorization") String jwt, @RequestParam(required = false) OrderType order_type, @RequestParam(required = false) String asset_symbol) throws Exception{
+    public ResponseEntity<List<Orders>> getAllOrdersForUser(@RequestHeader("Authorization") String jwt, @RequestParam(required = false) OrderType order_type, @RequestParam(required = false) String asset_symbol) throws Exception{
         Long userId = userService.findUserProfileByJwt(jwt).getId();
 
-        List<Order> useOrders = orderService.getAllOrdersOfUser(userId, order_type, asset_symbol);
+        List<Orders> useOrders = orderService.getAllOrdersOfUser(userId, order_type, asset_symbol);
 
         return ResponseEntity.ok(useOrders);
     }

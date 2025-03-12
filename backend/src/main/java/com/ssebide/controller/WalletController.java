@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssebide.modal.Order;
+import com.ssebide.modal.Orders;
 import com.ssebide.modal.PaymentOrder;
 import com.ssebide.modal.User;
 import com.ssebide.modal.Wallet;
@@ -65,7 +65,7 @@ public class WalletController {
         
         User senderUser = userService.findUserProfileByJwt(jwt);
 
-        Order order = orderService.getOrderById(orderId);
+        Orders order = orderService.getOrderById(orderId);
 
         Wallet wallet = walletService.payOrderPayment(order, senderUser);
 

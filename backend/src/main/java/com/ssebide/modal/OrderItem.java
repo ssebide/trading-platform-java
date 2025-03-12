@@ -29,6 +29,6 @@ public class OrderItem {
 
     @JsonIgnore
     @OneToOne
-    private Order order;
+    private Orders order;
 
 }

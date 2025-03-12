@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssebide.domain.OrderType;
-import com.ssebide.modal.Order;
+import com.ssebide.modal.Orders;
 import com.ssebide.modal.User;
 import com.ssebide.modal.Wallet;
 import com.ssebide.repository.WalletRepository;
@@ -72,7 +72,7 @@ public class WalletServiceImpl implements WalletService{
     }
 
     @Override
-    public Wallet payOrderPayment(Order order, User user) throws Exception {
+    public Wallet payOrderPayment(Orders order, User user) throws Exception {
         Wallet wallet = getUserWallet(user);
 
         if(order.getOrderType().equals(OrderType.BUY)){

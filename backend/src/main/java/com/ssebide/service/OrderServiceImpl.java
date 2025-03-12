@@ -12,7 +12,7 @@ import com.ssebide.domain.OrderStatus;
 import com.ssebide.domain.OrderType;
 import com.ssebide.modal.Asset;
 import com.ssebide.modal.Coin;
-import com.ssebide.modal.Order;
+import com.ssebide.modal.Orders;
 import com.ssebide.modal.OrderItem;
 import com.ssebide.modal.User;
 import com.ssebide.repository.OrderItemRepository;
@@ -34,17 +34,17 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemRepository orderItemRepository;
 
     @Override
-    public Order getOrderById(Long orderId) throws Exception {
+    public Orders getOrderById(Long orderId) throws Exception {
         
         return orderRepository.findById(orderId).orElseThrow(() -> new Exception("Order not found"));
     }
 
     @Override
-    public Order createOrder(User user, OrderItem orderItem, OrderType orderType) {
+    public Orders createOrder(User user, OrderItem orderItem, OrderType orderType) {
         
         double price = orderItem.getCoin().getCurrentPrice()*orderItem.getQuantity();
 
-        Order order = new Order();
+        Orders order = new Orders();
 
         order.setUser(user);
         order.setOrderItem(orderItem);
@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAllOrdersOfUser(Long userId, OrderType orderType, String assetSymbol) {
+    public List<Orders> getAllOrdersOfUser(Long userId, OrderType orderType, String assetSymbol) {
        
         return orderRepository.findByUserId(userId);
     }
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
-    public Order buyAsset(Coin coin, double quantity, User user) throws Exception{
+    public Orders buyAsset(Coin coin, double quantity, User user) throws Exception{
         if(quantity<=0){
             throw new Exception("Quantity should be greater than zero");
         }
@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
 
         OrderItem orderItem = createOrderItem(coin, quantity, buyPrice, 0);
 
-        Order order = createOrder(user, orderItem, OrderType.BUY);
+        Orders order = createOrder(user, orderItem, OrderType.BUY);
 
         orderItem.setOrder(order);
 
@@ -93,7 +93,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderType(OrderType.BUY);
 
-        Order savedOrder = orderRepository.save(order);
+        Orders savedOrder = orderRepository.save(order);
 
         //create asset
         Asset oldAsset = assetService.findAssetByUserIdAndCoinId(order.getUser().getId(), order.getOrderItem().getCoin().getId());
@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Transactional
-    public Order sellAsset(Coin coin, double quantity, User user) throws Exception{
+    public Orders sellAsset(Coin coin, double quantity, User user) throws Exception{
         if(quantity<=0){
             throw new Exception("Quantity should be greater than zero");
         }
@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
         if(assetToSell!=null){      
             OrderItem orderItem = createOrderItem(coin, quantity, buyPrice, sellPrice);
 
-            Order order = createOrder(user, orderItem, OrderType.SELL);
+            Orders order = createOrder(user, orderItem, OrderType.SELL);
         
         orderItem.setOrder(order);
 
@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
 
             order.setStatus(OrderStatus.SUCCESS);
             order.setOrderType(OrderType.SELL);
-            Order savedOrder = orderRepository.save(order);
+            Orders savedOrder = orderRepository.save(order);
 
             walletService.payOrderPayment(order, user);
 
@@ -148,7 +148,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Order processOrder(Coin coin, double quantity, OrderType orderType, User user) throws Exception {
+    public Orders processOrder(Coin coin, double quantity, OrderType orderType, User user) throws Exception {
         
         if(orderType.equals(OrderType.BUY)){
             return buyAsset(coin, quantity, user); 
